@@ -22,6 +22,21 @@ void gotoxy(int x, int y){
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cord);
 }
 
+int checkColision(){
+    if(cord.X == 80 || cord.Y == 25){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int checkFruit(){
+    if(cord.X == fruitX && cord.Y == fruitY){
+        return 1;
+    }
+    return 0;
+}
+
 void placeFruit(){
     int holdX, holdY;
     holdX = cord.X;
@@ -35,6 +50,18 @@ void placeFruit(){
     cord.X = holdX;
     cord.Y = holdY;
     gotoxy(cord.X, cord.Y);
+}
+
+void updateDirection(char c){
+    if(c == 'w'){
+        snakeBody[0].direction = 3;
+    }else if(c == 's'){
+        snakeBody[0].direction = 4;
+    }else if(c == 'd'){
+        snakeBody[0].direction = 1;
+    }else if(c == 'a'){
+        snakeBody[0].direction = 2;
+    }
 }
 
 void updateFrame(){
@@ -62,7 +89,7 @@ void updateFrame(){
             }
             snakeBody[i].posx--;
         }
-        if(snakeBody[i].direction == 3){
+        if(snakeBody[i].direction == 4){
             gotoxy(snakeBody[i].posx, snakeBody[i].posy+1);
             printf("#");
 
@@ -73,7 +100,7 @@ void updateFrame(){
             }
             snakeBody[i].posy++;;
         }
-        if(snakeBody[i].direction == 4){
+        if(snakeBody[i].direction == 3){
             gotoxy(snakeBody[i].posx, snakeBody[i].posy-1);
             printf("#");
 
@@ -96,7 +123,7 @@ void updateFrame(){
 int main(){
     char c;
     gotoxy(40, 12);
-    srand( (unsigned)time(NULL) );
+    srand((unsigned)time(NULL));
     placeFruit();
 
     //play
@@ -107,13 +134,17 @@ int main(){
         printf("%c", 32);
         gotoxy(cord.X+1, cord.Y); */ 
 
+        if(_kbhit()){
+            c = _getch();
+            updateDirection(c);
+        }
+
         updateFrame();
 
-
-        if(cord.X == 80 || cord.Y == 25){
+        if(checkColision()){
             return 0;
         }
-        if(cord.X == fruitX && cord.Y == fruitY){
+        if(checkFruit()){
             return 0;
         }
 
