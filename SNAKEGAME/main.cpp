@@ -5,13 +5,36 @@
 
 using namespace std;
 
+typedef struct {
+    int direction;
+    int posx;
+    int posy;
+} block;
+
 COORD cord = {0,0};
-int flag=0, state = 1, random, fruitX, fruitY; // 1 - dir | 2 - esq | 3 - cima | 4 - baixo
+block snakeBody[2000];
+int flag=0, state = 1, random, fruitX, fruitY, n=1; // 1 - dir | 2 - esq | 3 - cima | 4 - baixo
+int holdHeadX, holdHeadY;
 
 void gotoxy(int x, int y){
     cord.X = x;
     cord.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cord);
+}
+
+int checkColision(){
+    if(cord.X == 80 || cord.Y == 25){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int checkFruit(){
+    if(cord.X == fruitX && cord.Y == fruitY){
+        return 1;
+    }
+    return 0;
 }
 
 void placeFruit(){
@@ -29,10 +52,81 @@ void placeFruit(){
     gotoxy(cord.X, cord.Y);
 }
 
+void updateDirection(char c){
+    if(c == 'w'){
+        snakeBody[0].direction = 3;
+    }else if(c == 's'){
+        snakeBody[0].direction = 4;
+    }else if(c == 'd'){
+        snakeBody[0].direction = 1;
+    }else if(c == 'a'){
+        snakeBody[0].direction = 2;
+    }
+}
+
+void updateFrame(){
+
+    for(int i=0; i<n;i++){
+        if(snakeBody[i].direction == 1){
+            gotoxy(snakeBody[i].posx+1, snakeBody[i].posy);
+            printf("#");
+
+            if(n > 1){
+                snakeBody[i+1].posx = snakeBody[i].posx-1;
+                snakeBody[i+1].posy = snakeBody[i].posy;
+                snakeBody[i+1].direction = snakeBody[i].direction;
+            }
+            snakeBody[i].posx++;
+        }
+        if(snakeBody[i].direction == 2){
+            gotoxy(snakeBody[i].posx-1, snakeBody[i].posy);
+            printf("#");
+
+            if(n > 1){
+                snakeBody[i+1].posx = snakeBody[i].posx+1;
+                snakeBody[i+1].posy = snakeBody[i].posy;
+                snakeBody[i+1].direction = snakeBody[i].direction;
+            }
+            snakeBody[i].posx--;
+        }
+        if(snakeBody[i].direction == 4){
+            gotoxy(snakeBody[i].posx, snakeBody[i].posy+1);
+            printf("#");
+
+            if(n > 1){
+                snakeBody[i+1].posx = snakeBody[i].posx;
+                snakeBody[i+1].posy = snakeBody[i].posy-1;
+                snakeBody[i+1].direction = snakeBody[i].direction;
+            }
+            snakeBody[i].posy++;;
+        }
+        if(snakeBody[i].direction == 3){
+            gotoxy(snakeBody[i].posx, snakeBody[i].posy-1);
+            printf("#");
+
+            if(n > 1){
+                snakeBody[i+1].posx = snakeBody[i].posx;
+                snakeBody[i+1].posy = snakeBody[i].posy+1;
+                snakeBody[i+1].direction = snakeBody[i].direction;
+            }
+            snakeBody[i].posy--;
+        }
+    }
+
+    Sleep(100);
+    gotoxy(snakeBody[n-1].posx, snakeBody[n-1].posy);
+    printf("%c", 32);
+    /* if(n>1){
+        printf("!");
+    } */
+    gotoxy(snakeBody[0].posx, snakeBody[0].posy);
+
+}
+
 int main(){
     char c;
     gotoxy(40, 12);
-    srand( (unsigned)time(NULL) );
+    srand((unsigned)time(NULL));
     placeFruit();
 
     //play
@@ -43,103 +137,19 @@ int main(){
         printf("%c", 32);
         gotoxy(cord.X+1, cord.Y); */ 
 
-        if(flag == 1){
-            if(c == 'w'){
-                state = 3;
-            }else if(c == 's'){
-                state = 4;
-            }else if(c == 'd'){
-                state = 1;
-            }else if(c == 'a'){
-                state = 2;
-            }
-            flag = 0;
+        if(_kbhit()){
+            c = _getch();
+            updateDirection(c);
         }
 
-        switch(state){
+        updateFrame();
 
-            case 1:
-                while(1){
-                    if(_kbhit()){
-                        c = _getch();
-                        if(c != 'd'){
-                            flag=1;
-                            break;
-                        }
-                    }
-                    if(cord.X == fruitX && cord.Y == fruitY){
-                         return 0;
-                    }
-                    printf("#");
-                    gotoxy(cord.X, cord.Y);
-                    Sleep(50);
-                    printf("%c", 32);
-                    gotoxy(cord.X+1, cord.Y);
-                }break;
-            
-            case 2:
-                while(1){
-                    if(_kbhit()){
-                        c = _getch();
-                        if(c != 'a'){
-                            flag = 1;
-                            break;
-                        }
-                    }
-                    if(cord.X == fruitX && cord.Y == fruitY){
-                         return 0;
-                    }
-                    printf("#");
-                    gotoxy(cord.X, cord.Y);
-                    Sleep(50);
-                    printf("%c", 32);
-                    gotoxy(cord.X-1, cord.Y);
-                }break;
-
-            case 3:
-                while(1){
-                    if(_kbhit()){
-                        c = _getch();
-                        if(c != 'w'){
-                            flag = 1;
-                            break;
-                        }
-                    }
-                    if(cord.X == fruitX && cord.Y == fruitY){
-                         return 0;
-                    }
-                    printf("#");
-                    gotoxy(cord.X, cord.Y);
-                    Sleep(100);
-                    printf("%c", 32);
-                    gotoxy(cord.X, cord.Y-1);
-                }break;
-
-            case 4:
-                while(1){
-                    if(_kbhit()){
-                        c = _getch();
-                        if(c != 's'){
-                            flag = 1;
-                            break;
-                        }
-                    }
-                    if(cord.X == fruitX && cord.Y == fruitY){
-                         return 0;
-                    }
-                    printf("#");
-                    gotoxy(cord.X, cord.Y);
-                    Sleep(100);
-                    printf("%c", 32);
-                    gotoxy(cord.X, cord.Y+1);
-                }break;
-            }
-
-        if(cord.X == 80 || cord.Y == 25){
+        if(checkColision()){
             return 0;
         }
-        if(cord.X == fruitX && cord.Y == fruitY){
-            return 0;
+        if(checkFruit()){
+            n++;
+            placeFruit();
         }
 
     }
