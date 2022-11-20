@@ -64,58 +64,86 @@ void updateDirection(char c){
     }
 }
 
-void updateFrame(){
+void updateHead(){
+    if(snakeBody[i].direction == 1){
 
+    }else if(snakeBody[i].direction == 2){
+
+    }else if(snakeBody[i].direction == 3){
+
+    }else if(snakeBody[i].direction == 4){
+
+    }
+}
+
+void updateFrame(){
+    int gg, kk;
+    gg = snakeBody[n-1].posx;
+    kk = snakeBody[n-1].posy;
     for(int i=0; i<n;i++){
         if(snakeBody[i].direction == 1){
-            gotoxy(snakeBody[i].posx+1, snakeBody[i].posy);
-            printf("#");
 
             if(n > 1){
                 snakeBody[i+1].posx = snakeBody[i].posx-1;
                 snakeBody[i+1].posy = snakeBody[i].posy;
                 snakeBody[i+1].direction = snakeBody[i].direction;
             }
+            if(i == 0){
+                gotoxy(snakeBody[i].posx+1, snakeBody[i].posy);
+                printf("#");
+                gotoxy(snakeBody[n-1].posx, snakeBody[n-1].posy);
+                printf("%c", 32);
+            }
             snakeBody[i].posx++;
         }
         if(snakeBody[i].direction == 2){
-            gotoxy(snakeBody[i].posx-1, snakeBody[i].posy);
-            printf("#");
 
             if(n > 1){
                 snakeBody[i+1].posx = snakeBody[i].posx+1;
                 snakeBody[i+1].posy = snakeBody[i].posy;
                 snakeBody[i+1].direction = snakeBody[i].direction;
             }
+            if(i==0){
+                gotoxy(snakeBody[i].posx-1, snakeBody[i].posy);
+                printf("#");
+                gotoxy(snakeBody[n-1].posx, snakeBody[n-1].posy);
+                printf("%c", 32);
+            }
             snakeBody[i].posx--;
         }
         if(snakeBody[i].direction == 4){
-            gotoxy(snakeBody[i].posx, snakeBody[i].posy+1);
-            printf("#");
 
             if(n > 1){
                 snakeBody[i+1].posx = snakeBody[i].posx;
                 snakeBody[i+1].posy = snakeBody[i].posy-1;
                 snakeBody[i+1].direction = snakeBody[i].direction;
             }
+            if(i==0){
+                gotoxy(snakeBody[i].posx, snakeBody[i].posy+1);
+                printf("#");
+                gotoxy(snakeBody[n-1].posx, snakeBody[n-1].posy);
+                printf("%c", 32);
+            }
             snakeBody[i].posy++;;
         }
         if(snakeBody[i].direction == 3){
-            gotoxy(snakeBody[i].posx, snakeBody[i].posy-1);
-            printf("#");
 
             if(n > 1){
                 snakeBody[i+1].posx = snakeBody[i].posx;
                 snakeBody[i+1].posy = snakeBody[i].posy+1;
                 snakeBody[i+1].direction = snakeBody[i].direction;
             }
+            if(i==0){
+                gotoxy(snakeBody[i].posx, snakeBody[i].posy-1);
+                printf("#");
+                gotoxy(snakeBody[n-1].posx, snakeBody[n-1].posy);
+                printf("%c", 32);
+            }
             snakeBody[i].posy--;
         }
     }
 
-    Sleep(100);
-    gotoxy(snakeBody[n-1].posx, snakeBody[n-1].posy);
-    printf("%c", 32);
+    Sleep(80);
     /* if(n>1){
         printf("!");
     } */
@@ -135,11 +163,14 @@ int main(){
         gotoxy(cord.X, cord.Y);
         Sleep(100);
         printf("%c", 32);
-        gotoxy(cord.X+1, cord.Y); */ 
+        gotoxy(cord.X+1, cord.Y); */
 
         if(_kbhit()){
             c = _getch();
             updateDirection(c);
+            if(n == 4){
+                int r=5;
+            }
         }
 
         updateFrame();
