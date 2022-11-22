@@ -22,11 +22,9 @@ void gotoxy(int x, int y){
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cord);
 }
 
-int checkColision(){
-    if(cord.X == 78 || cord.X == 0 || cord.Y == 25 || cord.Y == 0){
-        return 1;
-    }else{
-        return 0;
+void checkColision(){
+    if(cord.X == 79 || cord.X == 0 || cord.Y == 25 || cord.Y == 0){
+        exit(0);
     }
 }
 
@@ -122,7 +120,6 @@ void updateHead(){
 void play(){
     char c;
     drawCanva();
-    srand((unsigned)time(NULL));
     placeFruit();
     snakeBody[0].posx = 40; snakeBody[0].posy = 12;
 
@@ -136,9 +133,7 @@ void play(){
             updateDirection(c);
         }
 
-        if(checkColision()){
-            return;
-        }
+        checkColision();
         if(checkFruit()){
             n++;
             placeFruit();
@@ -243,7 +238,7 @@ void drawMenu()
 
 
 int main(){
-
+    srand((unsigned)time(NULL));
     drawMenu();
 
     return 0;
